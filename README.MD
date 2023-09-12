@@ -29,8 +29,8 @@ terminu (dopuszczalny zakre od - do), ceny (od - do), kategorii, wybranych innyc
 
 #### GitHub
 
-- jakie branch'e wykorzystujemy
-- jaki wzorzec nazw branche'y stosujemy
+- jakie branch'e wykorzystujemy: feature -> PR -> master
+- jaki wzorzec nazw branche'y stosujemy: feature/BOK1A
 - czy włączamy automatycznie budowanie
 
 #### Definition of Ready (DoR), Definition of Done (DoD)
@@ -41,7 +41,7 @@ Z uwagi na fakt, że skupiamy się na programowaniu a nie analizie, pomijamy DoR
 
 - kod musi się budować
 - zgłaszamy PR po zakończeniu prac nad całym zagadnieniem uzgodnionym jako zakres
-- logika musi być pokryta min. w 70% przez testy
+- logika musi być pokryta min. w min 50% przez testy - jakie (po demo)
 - musi być approval do PR od innego niż autor programisty
 
 ### Baza danych
