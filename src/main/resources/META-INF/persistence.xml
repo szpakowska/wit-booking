@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
+	<persistence-unit name="BookingService" transaction-type="RESOURCE_LOCAL">
+		<class>pl.sdacademy.booking.data.ItemEntity</class>
+		<class>pl.sdacademy.booking.data.ItemAttributeEntity</class>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://192.168.44.128:3306/booking"/>
+			<property name="javax.persistence.jdbc.user" value="booking"/>
+			<property name="javax.persistence.jdbc.password" value="passwd"/>
+			<!--			<property name="hibernate.hbm2ddl.auto" value="update"/>-->
+			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+			<property name="hibernate.hikari.minimumIdle" value="5"/>
+			<property name="hibernate.hikari.maximumPoolSize" value="10"/>
+			<property name="hibernate.hikari.idleTimeout" value="30000"/>
+			<property name="hibernate.hikari.connectionTestQuery" value="select count(*) from booking"/>
+			<property name="hibernate.connection.provider_class"
+					  value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>
+		</properties>
+	</persistence-unit>
+</persistence>
