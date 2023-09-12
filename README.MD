@@ -44,3 +44,21 @@ Z uwagi na fakt, że skupiamy się na programowaniu a nie analizie, pomijamy DoR
 - logika musi być pokryta min. w 70% przez testy
 - musi być approval do PR od innego niż autor programisty
 
+### Baza danych
+
+    CREATE DATABASE booking;
+    CREATE USER 'booking' identified by 'passwd';
+    GRANT ALL ON booking.* to booking;
+    FLUSH PRIVILEGES;
+
+Przełączyć się na nowego użytkownika i sprawdzić czy na pewno może tworzyć obiekty
+
+    create table test
+    (
+    id int null
+    );
+    DROP TABLE test;
+
+URL do wykorzystania w programie
+
+    jdbc:mysql://localhost:3306/booking
