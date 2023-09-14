@@ -3,9 +3,12 @@ package pl.sdacademy.booking.util;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.sdacademy.booking.data.BookingEntity;
+import pl.sdacademy.booking.data.EventEntity;
 import pl.sdacademy.booking.data.ItemEntity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,5 +57,29 @@ class DatabaseUtilIT {
         assertThat(result.get(1).getAttributes()).hasSize(1);
         assertThat(result.get(2).getAttributes()).hasSize(1);
         assertThat(result.get(2).getPrice()).isEqualTo(BigDecimal.valueOf(450));
+    }
+
+    @Test
+    void shouldFindAllEvents() {
+
+        var query = entityManager.createQuery("select event from EventEntity event "
+                + " order by event.id", EventEntity.class);
+
+        var result = query.getResultList();
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getFrom()).isEqualTo(LocalDateTime.of(2023, 9, 13, 12, 0, 0));
+    }
+
+    @Test
+    void shouldFindAllBookings() {
+
+        var query = entityManager.createQuery("select booking from BookingEntity booking "
+                + " order by booking.id", BookingEntity.class);
+
+        var result = query.getResultList();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getCustomerName()).isEqualTo("ĄąłłóóĘęŚśĆćŃń");
     }
 }
