@@ -9,9 +9,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-class DatabaseUtilTest {
+class DatabaseUtilIT {
 
     private EntityManager entityManager;
 
