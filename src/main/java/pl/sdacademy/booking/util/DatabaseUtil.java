@@ -12,7 +12,7 @@ public final class DatabaseUtil {
 
     private static void buildSessionFactory() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("BookingService");
-        entityManager = emf.createEntityManage();
+        entityManager = emf.createEntityManager();
     }
 
     public static EntityManager getEntityManager() {
