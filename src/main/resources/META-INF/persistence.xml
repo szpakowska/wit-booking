@@ -5,7 +5,7 @@
 		<class>pl.sdacademy.booking.data.ItemAttributeEntity</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://192.168.44.128:3306/booking"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/booking"/>
 			<property name="javax.persistence.jdbc.user" value="booking"/>
 			<property name="javax.persistence.jdbc.password" value="passwd"/>
 			<!--			<property name="hibernate.hbm2ddl.auto" value="update"/>-->

@@ -18,7 +18,8 @@ public class ItemDto {
     private String name;
     private String description;
     private BigDecimal price;
-    private String category;
+    // TODO: zmienic baze danych i dodac taka kolumne w Item
+    // private String category;
 
     private Set<String> attributes;
 }
