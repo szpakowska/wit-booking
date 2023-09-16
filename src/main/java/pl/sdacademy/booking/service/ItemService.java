@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import pl.sdacademy.booking.data.ItemAttributeEntity;
 import pl.sdacademy.booking.data.ItemEntity;
 import pl.sdacademy.booking.model.ItemDto;
+import pl.sdacademy.booking.model.NewItemDto;
 import pl.sdacademy.booking.repository.ItemRepository;
 
 import java.util.ArrayList;
@@ -43,5 +44,18 @@ public class ItemService {
             result.add(attributeEntity.getAttributeName());
         }
         return result;
+    }
+
+    public String addITem(NewItemDto newItem) {
+        Long itemByName = itemRepository.findItemByName(newItem.getName());
+        if (itemByName != null) {
+            return "Element istnieje";
+        }
+        ItemEntity itemEntity = new ItemEntity();
+        itemEntity.setName(newItem.getName());
+        itemEntity.setDescription(newItem.getDescription());
+        itemEntity.setPrice(newItem.getPrice());
+        itemRepository.addItem(itemEntity);
+        return "Element zapisany";
     }
 }

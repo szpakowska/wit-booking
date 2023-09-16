@@ -60,5 +60,15 @@ class ItemServiceTest {
             first.setPrice(BigDecimal.valueOf(120.0));
             return List.of(first, second);
         }
+
+        @Override
+        public void addItem(ItemEntity item) {
+
+        }
+
+        @Override
+        public Long findItemByName(String name) {
+            return null;
+        }
     }
 }
