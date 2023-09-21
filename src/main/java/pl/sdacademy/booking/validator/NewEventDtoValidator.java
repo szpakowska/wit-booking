@@ -2,7 +2,10 @@ package pl.sdacademy.booking.validator;
 
 import pl.sdacademy.booking.model.NewEventDto;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,27 +62,46 @@ public class NewEventDtoValidator {
             //date from 8 to 16
 //        zalozylam,ze najdluzsza sesja trwa 30 minut, najkrotsza 15 minut, co wplywa na graniczne wartosci godzin
 
+
+            if (isFromTimeBeforeOpening(newEventDto)) {
+                result.add("From is before opening");
+            }
+            //todo sprawdzic implementacje testu do tej metody
+            if (isToTimeAfterClosing(newEventDto)) {
+                result.add("To is after closing");
+            }
 //
-//            if (newEventDto.getFromTime().getHour() < open.getHour()) {
-//                result.add("From is before opening");
-//            }
-//            if (newEventDto.getToTime().getHour() > close.getHour()) {
-//                result.add("To is after closing");
-//            }
-//
-//            if (newEventDto.getFromTime().getHour() > close.getHour() - maxSession.getHour()) {
+//            if (isFromTimeEnoughForMaxSession(newEventDto)) {
 //                result.add("To is more than maximum session maxSessionTime before closing");
 //            }
-//            if (newEventDto.getToTime().getHour() < open.getHour() - minSession.getHour()) {
+//            if (isToTimeEnoughForMinSession(newEventDto)) {
 //                result.add("To is less than minimum session maxSessionTime after opening");
 //            }
-        }
+//        }
 
-        //item name is null
-        if (isItemWithoutName(newEventDto)) {
-            result.add("Item has no name");
+            //item name is null
+            if (isItemWithoutName(newEventDto)) {
+                result.add("Item has no name");
+            }
+
         }
         return result;
+    }
+
+    private static boolean isToTimeEnoughForMinSession(NewEventDto newEventDto) {
+        return newEventDto.getToTime().getHour() < open.getHour() - minSessionTime.getHour();
+    }
+
+    private static boolean isFromTimeEnoughForMaxSession(NewEventDto newEventDto) {
+        return newEventDto.getFromTime().getHour() > close.getHour() - maxSessionTime.getHour();
+    }
+
+    private static boolean isToTimeAfterClosing(NewEventDto newEventDto) {
+        return newEventDto.getToTime().getHour() > close.getHour();
+    }
+
+    private static boolean isFromTimeBeforeOpening(NewEventDto newEventDto) {
+        return newEventDto.getFromTime().getHour() < open.getHour();
     }
 
     private static boolean isEventTooLong(Duration durationBetween) {
