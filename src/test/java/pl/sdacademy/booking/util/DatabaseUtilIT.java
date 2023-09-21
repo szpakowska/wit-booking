@@ -33,11 +33,11 @@ class DatabaseUtilIT {
 
         var result = query.getResultList();
 
-        assertThat(result).hasSize(4);
+        Assertions.assertThat(result).hasSize(4);
         // zadziala tylko dlatego, ze jest order by w zapytaniu
         // jakby order nie byl dodany kazde wywolanie mogloby sie skonczyc inna kolejnoscia zwracanych danych
-        assertThat(result.get(0).getAttributes()).hasSize(1);
-        assertThat(result.get(1).getPrice()).isEqualTo(BigDecimal.valueOf(450));
+        Assertions.assertThat(result.get(0).getAttributes()).hasSize(1);
+        Assertions.assertThat(result.get(1).getPrice()).isEqualTo(BigDecimal.valueOf(450));
     }
 
     @Test
@@ -50,13 +50,13 @@ class DatabaseUtilIT {
         // jezeli z jakiegos powodu entity manages zostanie "w miedzyczasie" zamkniety pojawia sie problemy
 //        entityManager.close();
 
-        assertThat(result).hasSize(5);
+        Assertions.assertThat(result).hasSize(5);
         // zadziala tylko dlatego, ze jest order by w zapytaniu
         // jakby order nie byl dodany kazde wywolanie mogloby sie skonczyc inna kolejnoscia zwracanych danych
-        assertThat(result.get(0).getAttributes()).hasSize(1);
-        assertThat(result.get(1).getAttributes()).hasSize(1);
-        assertThat(result.get(2).getAttributes()).hasSize(1);
-        assertThat(result.get(2).getPrice()).isEqualTo(BigDecimal.valueOf(450));
+        Assertions.assertThat(result.get(0).getAttributes()).hasSize(1);
+        Assertions.assertThat(result.get(1).getAttributes()).hasSize(1);
+        Assertions.assertThat(result.get(2).getAttributes()).hasSize(1);
+        Assertions.assertThat(result.get(2).getPrice()).isEqualTo(BigDecimal.valueOf(450));
     }
 
     @Test
@@ -67,8 +67,8 @@ class DatabaseUtilIT {
 
         var result = query.getResultList();
 
-        assertThat(result).hasSize(2);
-        assertThat(result.get(0).getFrom()).isEqualTo(LocalDateTime.of(2023, 9, 13, 12, 0, 0));
+        Assertions.assertThat(result).hasSize(2);
+        Assertions.assertThat(result.get(0).getFrom()).isEqualTo(LocalDateTime.of(2023, 9, 13, 12, 0, 0));
     }
 
     @Test
@@ -79,7 +79,7 @@ class DatabaseUtilIT {
 
         var result = query.getResultList();
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getCustomerName()).isEqualTo("ĄąłłóóĘęŚśĆćŃń");
+        Assertions.assertThat(result).hasSize(1);
+        Assertions.assertThat(result.get(0).getCustomerName()).isEqualTo("ĄąłłóóĘęŚśĆćŃń");
     }
 }

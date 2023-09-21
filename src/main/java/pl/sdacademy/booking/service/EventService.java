@@ -6,15 +6,18 @@ import pl.sdacademy.booking.data.EventEntity;
 import pl.sdacademy.booking.model.EventDto;
 import pl.sdacademy.booking.model.NewEventDto;
 import pl.sdacademy.booking.repository.EventRepository;
+import pl.sdacademy.booking.repository.ItemRepository;
+import pl.sdacademy.booking.validator.NewEventDtoValidator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Builder
+
 public class EventService {
 
     private final EventRepository eventRepository;
+    private ItemRepository itemRepository;
 
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
@@ -41,13 +44,22 @@ public class EventService {
         if (eventsByName != null) {
             return "Sesja już istnieje.";
         }
-        EventEntity eventEntity = new EventEntity();
-
-        //tutaj bedzie wyszukiwanie id_itemu po jego nazwie - być może można wykorzystać metode repostitory Item findbyName
-        //eventEntity.setItem(itemId)
-        eventEntity.setFrom(newEvent.getFromTime());
-        eventEntity.setTo(newEvent.getToTime());
-        eventRepository.addEvent(eventEntity);
+//        EventEntity eventEntity = new EventEntity();
+//        List<String> errorList = NewEventDtoValidator.validate(newEvent);
+//        if(!errorList.isEmpty()){
+//            return errorList.toString();
+//        }
+//        //tutaj bedzie wyszukiwanie id_itemu po jego nazwie - być może można wykorzystać metode repostitory Item findbyName
+//        String itemName = newEvent.getItemName();
+//        Long itemId = itemRepository.findItemByName(itemName);
+//        if (itemId == null) {
+//            return "Produkt o nazwie '" + itemName + "' nie istnieje.";
+//        }
+//
+//        eventEntity.setItem(eventEntity.getItem());
+//        eventEntity.setFrom(newEvent.getFromTime());
+//        eventEntity.setTo(newEvent.getToTime());
+//        eventRepository.addEvent(eventEntity);
         return "Sesja została zapisana";
     }
 

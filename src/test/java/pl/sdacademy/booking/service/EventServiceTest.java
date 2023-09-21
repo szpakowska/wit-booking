@@ -4,10 +4,13 @@ import org.junit.jupiter.api.Test;
 import pl.sdacademy.booking.data.EventEntity;
 import pl.sdacademy.booking.data.ItemEntity;
 import pl.sdacademy.booking.model.EventDto;
+import pl.sdacademy.booking.model.NewEventDto;
 import pl.sdacademy.booking.repository.EventRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 
@@ -15,13 +18,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class EventServiceTest {
 
-    private EventService sut;
+    private EventService eventService = new EventService(new TestEventRepository());
 
     @Test
     void shouldResultAllEventsInDbAsListOfDto() {
-        sut = new EventService(new TestEventRepository());
 
-        List<EventDto> result = sut.findEvents();
+
+        List<EventDto> result = eventService.findEvents();
 
         assertThat(result).hasSize(2);
         EventDto first = result.get(0);
@@ -61,6 +64,7 @@ class EventServiceTest {
             return List.of(first, second);
         }
 
+
         @Override
         public void addEvent(EventEntity item) {
 
@@ -70,6 +74,16 @@ class EventServiceTest {
         public Long findEventsByDate(LocalDateTime date) {
             return null;
         }
+
+    }
+    @Test void shouldReturnListOfErrors(){
+        NewEventDto input= NewEventDto.builder().itemName("przyklad")
+                .toTime(LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(8,9)))
+                .fromTime(LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(7,59)))
+                .build();
+        String result = eventService.addEvent(input);
+        System.out.println(result);
+        assertThat(result).contains("Time out of working hours");
 
     }
 }
