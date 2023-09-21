@@ -15,6 +15,7 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
+    //todo dołożyć pole klasy NewEventValidator ?
 
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
@@ -37,6 +38,8 @@ public class EventService {
     }
 
     public String addEvent(NewEventDto newEvent) {
+
+        //todo dołożyc walidację!
         Long eventsByName = eventRepository.findEventsByDate(newEvent.getFromTime());
         if (eventsByName != null) {
             return "Sesja już istnieje.";
