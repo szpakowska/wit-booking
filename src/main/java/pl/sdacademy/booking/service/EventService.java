@@ -1,12 +1,14 @@
 package pl.sdacademy.booking.service;
 
-import lombok.Builder;
+
 import lombok.extern.slf4j.Slf4j;
 import pl.sdacademy.booking.data.EventEntity;
+import pl.sdacademy.booking.data.ItemEntity;
 import pl.sdacademy.booking.model.EventDto;
 import pl.sdacademy.booking.model.NewEventDto;
 import pl.sdacademy.booking.repository.EventRepository;
 import pl.sdacademy.booking.repository.ItemRepository;
+import pl.sdacademy.booking.util.TimeNow;
 import pl.sdacademy.booking.validator.NewEventDtoValidator;
 
 import java.util.ArrayList;
@@ -30,8 +32,8 @@ public class EventService {
 
         for (EventEntity entity : eventEntities) {
             result.add(EventDto.builder()
-                    .itemName(entity.getItem().getName())
-                    .itemPrice(entity.getItem().getPrice())
+                    .name(entity.getItem().getName())
+                    .price(entity.getItem().getPrice())
                     .fromTime(entity.getFrom())
                     .toTime(entity.getTo())
                     .build());
@@ -40,26 +42,33 @@ public class EventService {
     }
 
     public String addEvent(NewEventDto newEvent) {
-        Long eventsByName = eventRepository.findEventsByDate(newEvent.getFromTime());
-        if (eventsByName != null) {
-            return "Sesja już istnieje.";
+//        Long eventsByName = eventRepository.findEventsByDate(newEvent.getFromTime());
+//        if (eventsByName != null) {
+//            return "Sesja już istnieje.";
+//        }
+
+        List<String> validate = NewEventDtoValidator.validate(newEvent,new TimeNow());
+        if (validate.size() != 0){
+            return String.join(", ",validate);
         }
-//        EventEntity eventEntity = new EventEntity();
-//        List<String> errorList = NewEventDtoValidator.validate(newEvent);
-//        if(!errorList.isEmpty()){
-//            return errorList.toString();
-//        }
-//        //tutaj bedzie wyszukiwanie id_itemu po jego nazwie - być może można wykorzystać metode repostitory Item findbyName
-//        String itemName = newEvent.getItemName();
-//        Long itemId = itemRepository.findItemByName(itemName);
-//        if (itemId == null) {
-//            return "Produkt o nazwie '" + itemName + "' nie istnieje.";
-//        }
-//
-//        eventEntity.setItem(eventEntity.getItem());
-//        eventEntity.setFrom(newEvent.getFromTime());
-//        eventEntity.setTo(newEvent.getToTime());
-//        eventRepository.addEvent(eventEntity);
+
+        EventEntity eventEntity = new EventEntity();
+        Long itemByName = itemRepository.findItemByName(newEvent.getItemName());//szukamy primary key
+
+        if (itemByName == null || itemByName == -1L) {
+            return "Nie znaleziono takiego obiektu";
+        }
+
+        ItemEntity itemEntity = new ItemEntity();
+        itemEntity.setId((itemByName));
+
+
+        //tutaj bedzie wyszukiwanie id_itemu po jego nazwie - być może można wykorzystać metode repostitory Item findbyName
+        //eventEntity.setItem(itemId)
+        eventEntity.setItem(itemEntity); //przekazujemy primary key
+        eventEntity.setFrom(newEvent.getFromTime());
+        eventEntity.setTo(newEvent.getToTime());
+        eventRepository.addEvent(eventEntity);
         return "Sesja została zapisana";
     }
 
