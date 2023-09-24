@@ -18,11 +18,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class EventServiceTest {
 
-    private EventService eventService = new EventService(new TestEventRepository());
+    private EventService eventService;
 
     @Test
     void shouldResultAllEventsInDbAsListOfDto() {
-        eventService = new EventService(new TestEventRepository());
+        eventService = new EventService(new TestEventRepository(), new ItemServiceTest.TestItemRepository());
 
 
         List<EventDto> result = eventService.findEvents();
@@ -76,13 +76,4 @@ class EventServiceTest {
         }
 
     }
-//    @Test void shouldReturnListOfErrors(){
-//        NewEventDto input= NewEventDto.builder().itemName("przyklad")
-//                .toTime(LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(8,9)))
-//                .fromTime(LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(7,59)))
-//                .build();
-//        String result = eventService.addEvent(input);
-//        System.out.println(result);
-//        assertThat(result).contains("Time out of working hours");
-
 }

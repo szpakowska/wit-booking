@@ -2,7 +2,6 @@ package pl.sdacademy.booking.validator;
 
 import org.apache.commons.lang3.StringUtils;
 import pl.sdacademy.booking.model.NewEventDto;
-import pl.sdacademy.booking.util.TimeNow;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -19,7 +18,7 @@ public class NewEventDtoValidator {
     private static final LocalTime minSessionTime = LocalTime.of(0, 10);
 
 
-    public static List<String> validate(NewEventDto newEventDto) {
+    public static List<String> validate(NewEventDto newEventDto, Clock clock) {
 
         List<String> result = new ArrayList<>();
 

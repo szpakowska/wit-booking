@@ -8,9 +8,9 @@ import pl.sdacademy.booking.model.EventDto;
 import pl.sdacademy.booking.model.NewEventDto;
 import pl.sdacademy.booking.repository.EventRepository;
 import pl.sdacademy.booking.repository.ItemRepository;
-import pl.sdacademy.booking.util.TimeNow;
 import pl.sdacademy.booking.validator.NewEventDtoValidator;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,15 +43,17 @@ public class EventService {
     }
 
     public String addEvent(NewEventDto newEvent) {
-//        Long eventsByName = eventRepository.findEventsByDate(newEvent.getFromTime());
-//        if (eventsByName != null) {
-//            return "Sesja już istnieje.";
-//        }
 
-        List<String> validate = NewEventDtoValidator.validate(newEvent,new TimeNow());
-        if (validate.size() != 0){
-            return String.join(", ",validate);
+        List<String> validate = NewEventDtoValidator.validate(newEvent, Clock.systemDefaultZone());
+        if (validate.size() != 0) {
+            return String.join(", ", validate);
         }
+        Long eventsByName = eventRepository.findEventsByDate(newEvent.getFromTime());
+
+        if (eventsByName != null) {
+            return "Sesja już istnieje.";
+        }
+
 
         EventEntity eventEntity = new EventEntity();
         Long itemByName = itemRepository.findItemByName(newEvent.getItemName());//szukamy primary key
@@ -65,12 +67,15 @@ public class EventService {
 
 
         //tutaj bedzie wyszukiwanie id_itemu po jego nazwie - być może można wykorzystać metode repostitory Item findbyName
-        //eventEntity.setItem(itemId)
+//        eventEntity.setItem(itemId)
         eventEntity.setItem(itemEntity); //przekazujemy primary key
         eventEntity.setFrom(newEvent.getFromTime());
         eventEntity.setTo(newEvent.getToTime());
         eventRepository.addEvent(eventEntity);
         return "Sesja została zapisana";
     }
+
 }
+
+
 
