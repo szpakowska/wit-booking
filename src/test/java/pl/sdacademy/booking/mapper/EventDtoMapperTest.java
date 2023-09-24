@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 import java.time.Month;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class EventDtoMapperTest {
+class EventDtoMapperTest {
     @Test
     void shouldMapEventEntityToEventDto() {
 
@@ -31,8 +31,8 @@ public class EventDtoMapperTest {
         EventDto eventDto = EventDtoMapper.mapToEventDto(eventEntity);
 
         assertThat(eventDto.getId()).isEqualTo(1L);
-        assertThat(eventDto.getItemName()).isEqualTo("Usuwanie przebarwień twarz");
-        assertThat(eventDto.getItemPrice()).isEqualByComparingTo(BigDecimal.valueOf(130.0));
+        assertThat(eventDto.getName()).isEqualTo("Usuwanie przebarwień twarz");
+        assertThat(eventDto.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(130.0));
         assertThat(eventDto.getFromTime()).isEqualTo(LocalDateTime.of(2023, Month.SEPTEMBER, 13, 12, 00));
         assertThat(eventDto.getToTime()).isEqualTo(LocalDateTime.of(2023, Month.SEPTEMBER, 13, 12, 50));
     }

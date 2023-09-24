@@ -12,8 +12,8 @@ public class EventDtoMapper {
 
         return EventDto.builder()
                 .id(entity.getId())
-                .itemName(entity.getItem().getName())
-                .itemPrice(entity.getItem().getPrice())
+                .name(entity.getItem().getName())
+                .price(entity.getItem().getPrice())
                 .fromTime(entity.getFrom())
                 .toTime(entity.getTo())
                 .build();

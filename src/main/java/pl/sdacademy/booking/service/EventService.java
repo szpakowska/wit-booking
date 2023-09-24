@@ -8,6 +8,7 @@ import pl.sdacademy.booking.model.EventDto;
 import pl.sdacademy.booking.model.NewEventDto;
 import pl.sdacademy.booking.repository.EventRepository;
 import pl.sdacademy.booking.repository.ItemRepository;
+import pl.sdacademy.booking.util.TimeNow;
 import pl.sdacademy.booking.validator.NewEventDtoValidator;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final ItemRepository itemRepository;
+    private ItemRepository itemRepository;
 
     public EventService(EventRepository eventRepository, ItemRepository itemRepository) {
         this.eventRepository = eventRepository;
@@ -32,8 +33,8 @@ public class EventService {
 
         for (EventEntity entity : eventEntities) {
             result.add(EventDto.builder()
-                    .itemName(entity.getItem().getName())
-                    .itemPrice(entity.getItem().getPrice())
+                    .name(entity.getItem().getName())
+                    .price(entity.getItem().getPrice())
                     .fromTime(entity.getFrom())
                     .toTime(entity.getTo())
                     .build());
@@ -42,37 +43,34 @@ public class EventService {
     }
 
     public String addEvent(NewEventDto newEvent) {
-
 //        Long eventsByName = eventRepository.findEventsByDate(newEvent.getFromTime());
 //        if (eventsByName != null) {
 //            return "Sesja już istnieje.";
 //        }
 
-        List<String> validate = NewEventDtoValidator.validate(newEvent);
-
-        if(validate.size() !=0) {
-            String message = String.join(", ",validate);
-            return message;
+        List<String> validate = NewEventDtoValidator.validate(newEvent,new TimeNow());
+        if (validate.size() != 0){
+            return String.join(", ",validate);
         }
 
         EventEntity eventEntity = new EventEntity();
-        Long itemByName = itemRepository.findItemByName(newEvent.getItemName());
+        Long itemByName = itemRepository.findItemByName(newEvent.getItemName());//szukamy primary key
 
-        // najlepiej ta walidacje przeniesc do osobnej klasy dolozyc do walidatora, ale wtedy *Validator musialby nie byc statyczny
-        if( itemByName == null || itemByName == -1){
+        if (itemByName == null || itemByName == -1L) {
             return "Nie znaleziono takiego obiektu";
         }
 
         ItemEntity itemEntity = new ItemEntity();
-        itemEntity.setId(itemByName);
+        itemEntity.setId((itemByName));
 
-        eventEntity.setItem(itemEntity); // przekazujemy primary key
+
+        //tutaj bedzie wyszukiwanie id_itemu po jego nazwie - być może można wykorzystać metode repostitory Item findbyName
+        //eventEntity.setItem(itemId)
+        eventEntity.setItem(itemEntity); //przekazujemy primary key
         eventEntity.setFrom(newEvent.getFromTime());
         eventEntity.setTo(newEvent.getToTime());
         eventRepository.addEvent(eventEntity);
         return "Sesja została zapisana";
     }
-
-
 }
 
