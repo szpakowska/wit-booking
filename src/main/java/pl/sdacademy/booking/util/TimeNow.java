@@ -8,5 +8,7 @@ public class TimeNow {
 
         System.out.println("Calling base class for passingTimeControl");
 
-        return LocalDateTime.now();};
+        return LocalDateTime.now();
+    }
 }
+

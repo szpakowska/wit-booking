@@ -1,9 +1,8 @@
 package pl.sdacademy.booking.mapper;
 
+import pl.sdacademy.booking.data.ItemAttributeEntity;
 import pl.sdacademy.booking.data.ItemEntity;
 import pl.sdacademy.booking.model.ItemDto;
-
-import pl.sdacademy.booking.data.ItemAttributeEntity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,3 +27,4 @@ public class ItemDtoMapper {
         return result;
     }
 }
+

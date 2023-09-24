@@ -4,6 +4,7 @@ import pl.sdacademy.booking.data.EventEntity;
 import pl.sdacademy.booking.model.EventDto;
 
 public class EventDtoMapper {
+
     public static EventDto mapToEventDto(EventEntity entity) {
         if (entity == null) {
             return null;
@@ -18,3 +19,4 @@ public class EventDtoMapper {
                 .build();
     }
 }
+

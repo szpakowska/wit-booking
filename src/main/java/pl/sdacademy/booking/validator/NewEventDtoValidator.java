@@ -2,60 +2,109 @@ package pl.sdacademy.booking.validator;
 
 import org.apache.commons.lang3.StringUtils;
 import pl.sdacademy.booking.model.NewEventDto;
-import pl.sdacademy.booking.util.TimeNow;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewEventDtoValidator{
+public class NewEventDtoValidator {
 
-    public static List<String> validate(NewEventDto newEventDto, TimeNow timeNow) {
+    private static final LocalTime open = LocalTime.of(8, 0);
+    private static final LocalTime close = LocalTime.of(16, 0);
+    private static final LocalTime maxSessionTime = LocalTime.of(0, 30);
+    private static final LocalTime minSessionTime = LocalTime.of(0, 10);
+
+
+    public static List<String> validate(NewEventDto newEventDto, Clock clock) {
+
         List<String> result = new ArrayList<>();
-        if (newEventDto == null) {
-            result.add("Event is null");
-            return result;
-        }
-        if (newEventDto.getFromTime() == null) {
-            result.add("From is null");
-        }
-        if (newEventDto.getToTime() == null) {
-            result.add("To is null");
-        }
-        if (newEventDto.getFromTime() != null && newEventDto.getToTime() != null) {
-            Duration duration = Duration.between(newEventDto.getFromTime(), newEventDto.getToTime());
-            if (duration.isNegative()) {
-                result.add("To is before from");
-            }
-            if (duration.toMinutes() > 30L) {
-                result.add("Event too long");
-            }
-            if (newEventDto.getFromTime().isBefore(timeNow.now())) {
-                result.add("From is in the past");
-            }
-            if (newEventDto.getToTime().isBefore(LocalDateTime.now())) {
-                result.add("To is in the past");
-            }
-            if ((newEventDto.getFromTime().getHour() >= 16) || (newEventDto.getFromTime().getHour() <= 8)) {
-                result.add("NewEvent outside working hours");
-            }
-        }
 
-        // if (newEventDto.getItemName() == null || newEventDto.getItemName().isEmpty()) {
-        if (StringUtils.isBlank(newEventDto.getItemName())) {
-            //zawsze najpierw sprawdzamy czy coś jest nullem
-            //a potem czy jet puste
-            //Poniżej tzw. short-circuit evaluation:
-            // true || willNeverExecute();
-            //false && willNeverExecute();
-
-            result.add("Item name is not set");
+        if (!isEventNull(newEventDto, result)) {
+            if (!isTimeValueNull(newEventDto, result) && !isItemWithoutName(newEventDto, result)) {
+                if (!isEventTimePastDate(newEventDto, result)) {
+                    if (!isEventTimeAfterClosing(newEventDto, result) && !isEventTimeBeforeOpening(newEventDto, result) && !isEnoughTimeForEvent(newEventDto, result)) {
+                        if (!isEventDurationProper(newEventDto, result)) {
+                            result.add("Validation process completed");
+                        }
+                    }
+                }
+            }
         }
-
         return result;
 
 
     }
 
+
+    private static boolean isEnoughTimeForEvent(NewEventDto newEventDto, List<String> result) {
+
+        if (newEventDto.getToTime().getHour() < open.getHour() - minSessionTime.getHour()
+                || newEventDto.getFromTime().getHour() > close.getHour() - maxSessionTime.getHour()) {
+            result.add("There is not enough time for this event");
+            return true;
+        } else return false;
+    }
+
+    private static boolean isEventTimeAfterClosing(NewEventDto newEventDto, List<String> result) {
+
+        if (newEventDto.getToTime().getHour() > close.getHour()
+                || newEventDto.getFromTime().getHour() >= close.getHour()
+                || newEventDto.getFromTime().getHour() >= close.getHour()) {
+            result.add("Event can't be set out of the working hours - from 08:00 to 16:00");
+            return true;
+        } else return false;
+    }
+
+    private static boolean isEventTimeBeforeOpening(NewEventDto newEventDto, List<String> result) {
+
+        if (newEventDto.getFromTime().getHour() < open.getHour()
+                || newEventDto.getToTime().getHour() < open.getHour()) {
+            result.add("Event can't be set out of the working hours - from 08:00 to 16:00");
+            return true;
+        } else return false;
+    }
+
+    private static boolean isEventDurationProper(NewEventDto newEventDto, List<String> result) {
+        Duration durationBetween = Duration.between(newEventDto.getFromTime(), newEventDto.getToTime());
+        if (durationBetween.toMinutes() > maxSessionTime.getMinute() ||
+                durationBetween.toMinutes() < minSessionTime.getMinute()) {
+            result.add("Event's length must be from 10-30 minutes");
+            return true;
+        } else return false;
+    }
+
+    private static boolean isEventTimePastDate(NewEventDto newEventDto, List<String> result) {
+        if (newEventDto.getFromTime().isBefore(LocalDateTime.now(Clock.systemDefaultZone()))
+                || newEventDto.getToTime().isBefore(LocalDateTime.now(Clock.systemDefaultZone()))) {
+            result.add("Event cannot be set in the past");
+            return true;
+        } else return false;
+    }
+
+    private static boolean isItemWithoutName(NewEventDto newEventDto, List<String> result) {
+//        if (newEventDto.getItemName() == null || newEventDto.getItemName().isEmpty()) {
+//            result.add("Item name have to be set");
+//        }
+        if (StringUtils.isAllBlank(newEventDto.getItemName())) {
+            result.add("Item name have to be set");
+            return true;
+        } else return false;
+    }
+
+    private static boolean isTimeValueNull(NewEventDto newEventDto, List<String> result) {
+        if (newEventDto.getFromTime() == null || newEventDto.getFromTime() == null) {
+            result.add("Time of event must be set");
+            return true;
+        } else return false;
+    }
+
+    private static boolean isEventNull(NewEventDto newEventDto, List<String> result) {
+        if (newEventDto == null) {
+            result.add("Event must be set");
+            return true;
+        } else return false;
+    }
 }

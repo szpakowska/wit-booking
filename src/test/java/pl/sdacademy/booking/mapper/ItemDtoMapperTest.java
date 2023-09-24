@@ -5,13 +5,13 @@ import pl.sdacademy.booking.data.ItemAttributeEntity;
 import pl.sdacademy.booking.data.ItemEntity;
 import pl.sdacademy.booking.model.ItemDto;
 
-
 import java.math.BigDecimal;
 import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
+public class ItemDtoMapperTest {
 
-class ItemDtoMapperTest {
     @Test
     void shouldMapEmptyEntityToDto() {
         ItemEntity input = new ItemEntity();
@@ -29,9 +29,7 @@ class ItemDtoMapperTest {
                         .description(null)
                         .name(null)
                         .attributes(Set.of())
-                        .build()
-                );
-
+                        .build());
     }
 
     @Test
@@ -59,9 +57,7 @@ class ItemDtoMapperTest {
                         .description("itemDesc")
                         .name("itemName")
                         .attributes(Set.of("1", "2"))
-                        .build()
-                );
-
+                        .build());
     }
-
 }
+
