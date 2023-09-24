@@ -2,6 +2,7 @@ package pl.sdacademy.booking.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @Data
 @Builder
+@EqualsAndHashCode
 public class EventDto {
 
     private Long id;

@@ -1,5 +1,6 @@
 package pl.sdacademy.booking.validator;
 
+import org.apache.commons.lang3.StringUtils;
 import pl.sdacademy.booking.model.NewEventDto;
 
 import java.time.Clock;
@@ -18,124 +19,90 @@ public class NewEventDtoValidator {
 
 
     public static List<String> validate(NewEventDto newEventDto) {
+
         List<String> result = new ArrayList<>();
 
-        // validate event :
-
-        //validate itemName- can be null or empty
-        //validate timeFrom and to:
-        //duration- to can be before from, session can be too long session can be too short
-        // from not in open hours, not enough time for session
-        //validate timeTo null, past
-        // duration- to can be before from, session can be too long session can be too short
-        // from not in open hours, not enough time for session
-
-        if (isFromTimeNull(newEventDto)) {
-            result.add("From is null");
-        }
-        if (isToTimeNull(newEventDto)) {
-            result.add("To is null");
-        }
-
-        //how long is event
-        if (!isToTimeNull(newEventDto) && !isFromTimeNull(newEventDto)) {
-            Duration durationBetween = Duration.between(newEventDto.getFromTime(), newEventDto.getToTime());
-
-            if (durationBetween.isNegative()) {
-                result.add("To is before from");
+        if (!isEventNull(newEventDto, result)) {
+            if (!isTimeValueNull(newEventDto, result) && !isItemWithoutName(newEventDto, result)) {
+                if (!isEventTimePastDate(newEventDto, result)) {
+                    if (!isEventTimeAfterClosing(newEventDto, result) && !isEventTimeBeforeOpening(newEventDto, result) && !isEnoughTimeForEvent(newEventDto, result)) {
+                        if (!isEventDurationProper(newEventDto, result)) {
+                            result.add("Validation process completed");
+                        }
+                    }
+                }
             }
-            if (isEventTooLong(durationBetween)) {
-                result.add("Too long event");
-            }
-            if (isEventTooShort(durationBetween)) {
-                result.add("Too short event");
-            }
-
-            //date in the future
-            if (isFromTimePastDate(newEventDto)) {
-                result.add("From date is from the past");
-            }
-            if (isToTimePastDate(newEventDto)) {
-                result.add("To date is from the past");
-            }
-
-            //date from 8 to 16
-//        zalozylam,ze najdluzsza sesja trwa 30 minut, najkrotsza 15 minut, co wplywa na graniczne wartosci godzin
-
-
-            if (isFromTimeBeforeOpening(newEventDto)) {
-                result.add("From is before opening");
-            }
-            //todo sprawdzic implementacje testu do tej metody
-            if (isToTimeAfterClosing(newEventDto)) {
-                result.add("To is after closing");
-            }
-//
-//            if (isFromTimeEnoughForMaxSession(newEventDto)) {
-//                result.add("To is more than maximum session maxSessionTime before closing");
-//            }
-//            if (isToTimeEnoughForMinSession(newEventDto)) {
-//                result.add("To is less than minimum session maxSessionTime after opening");
-//            }
-//        }
-
-            //item name is null
-            if (isItemWithoutName(newEventDto)) {
-                result.add("Item has no name");
-            }
-
         }
         return result;
     }
 
-    private static boolean isToTimeEnoughForMinSession(NewEventDto newEventDto) {
-        return newEventDto.getToTime().getHour() < open.getHour() - minSessionTime.getHour();
+
+    private static boolean isEnoughTimeForEvent(NewEventDto newEventDto, List<String> result) {
+
+        if (newEventDto.getToTime().getHour() < open.getHour() - minSessionTime.getHour()
+                || newEventDto.getFromTime().getHour() > close.getHour() - maxSessionTime.getHour()) {
+            result.add("There is not enough time for this event");
+            return true;
+        } else return false;
     }
 
-    private static boolean isFromTimeEnoughForMaxSession(NewEventDto newEventDto) {
-        return newEventDto.getFromTime().getHour() > close.getHour() - maxSessionTime.getHour();
+    private static boolean isEventTimeAfterClosing(NewEventDto newEventDto, List<String> result) {
+
+        if (newEventDto.getToTime().getHour() > close.getHour()
+                || newEventDto.getFromTime().getHour() >= close.getHour()
+                || newEventDto.getFromTime().getHour() >= close.getHour()) {
+            result.add("Event can't be set out of the working hours - from 08:00 to 16:00");
+            return true;
+        } else return false;
     }
 
-    private static boolean isToTimeAfterClosing(NewEventDto newEventDto) {
-        return newEventDto.getToTime().getHour() > close.getHour();
+    private static boolean isEventTimeBeforeOpening(NewEventDto newEventDto, List<String> result) {
+
+        if (newEventDto.getFromTime().getHour() < open.getHour()
+                || newEventDto.getToTime().getHour() < open.getHour()) {
+            result.add("Event can't be set out of the working hours - from 08:00 to 16:00");
+            return true;
+        } else return false;
     }
 
-    private static boolean isFromTimeBeforeOpening(NewEventDto newEventDto) {
-        return newEventDto.getFromTime().getHour() < open.getHour();
+    private static boolean isEventDurationProper(NewEventDto newEventDto, List<String> result) {
+        Duration durationBetween = Duration.between(newEventDto.getFromTime(), newEventDto.getToTime());
+        if (durationBetween.toMinutes() > maxSessionTime.getMinute() ||
+                durationBetween.toMinutes() < minSessionTime.getMinute()) {
+            result.add("Event's length must be from 10-30 minutes");
+            return true;
+        } else return false;
     }
 
-    private static boolean isEventTooLong(Duration durationBetween) {
-        return durationBetween.toMinutes() > maxSessionTime.getMinute();
+    private static boolean isEventTimePastDate(NewEventDto newEventDto, List<String> result) {
+        if (newEventDto.getFromTime().isBefore(LocalDateTime.now(Clock.systemDefaultZone()))
+                || newEventDto.getToTime().isBefore(LocalDateTime.now(Clock.systemDefaultZone()))) {
+            result.add("Event cannot be set in the past");
+            return true;
+        } else return false;
     }
 
-    private static boolean isEventTooShort(Duration durationBetween) {
-        return durationBetween.toMinutes() < minSessionTime.getMinute();
+    private static boolean isItemWithoutName(NewEventDto newEventDto, List<String> result) {
+//        if (newEventDto.getItemName() == null || newEventDto.getItemName().isEmpty()) {
+//            result.add("Item name have to be set");
+//        }
+        if (StringUtils.isAllBlank(newEventDto.getItemName())) {
+            result.add("Item name have to be set");
+            return true;
+        } else return false;
     }
 
-    private static boolean isToTimePastDate(NewEventDto newEventDto) {
-        return newEventDto.getToTime().isBefore(LocalDateTime.now(Clock.systemDefaultZone()));
+    private static boolean isTimeValueNull(NewEventDto newEventDto, List<String> result) {
+        if (newEventDto.getFromTime() == null || newEventDto.getFromTime() == null) {
+            result.add("Time of event must be set");
+            return true;
+        } else return false;
     }
 
-    private static boolean isFromTimePastDate(NewEventDto newEventDto) {
-        return newEventDto.getFromTime().isBefore(LocalDateTime.now(Clock.systemDefaultZone()));
+    private static boolean isEventNull(NewEventDto newEventDto, List<String> result) {
+        if (newEventDto == null) {
+            result.add("Event must be set");
+            return true;
+        } else return false;
     }
-
-    private static boolean isItemWithoutName(NewEventDto newEventDto) {
-        return newEventDto.getItemName() == null || newEventDto.getItemName().isEmpty();
-    }
-
-    private static boolean isToTimeNull(NewEventDto newEventDto) {
-        return newEventDto.getToTime() == null;
-    }
-
-    private static boolean isFromTimeNull(NewEventDto newEventDto) {
-        return newEventDto.getFromTime() == null;
-    }
-
-    //todo dopisac testy do TimeFrom oraz TimeTo uwzledniajace min i max dlugosc sesji
-
-    //todo refactoring metody validate- podzial na validate timeFrom, validate timeTo,
-    // validate Duration Bettween,
-
-
 }
